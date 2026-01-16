@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐍</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐍 Snake Game</h1>
+            <p class="subtitle">Classic Snake with Modern Twist</p>
+        </header>
+
+        <main>
+            <div class="game-info">
+                <div class="score-display">
+                    <div class="score-item">
+                        <span class="score-label">SCORE</span>
+                        <span id="current-score" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">HIGH SCORE</span>
+                        <span id="high-score" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">SPEED</span>
+                        <span id="game-speed" class="score-value">Normal</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">LENGTH</span>
+                        <span id="snake-length" class="score-value">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <div class="game-board-container">
+                    <canvas id="game-canvas" width="400" height="400"></canvas>
+                    <div id="game-overlay" class="overlay">
+                        <div class="overlay-content">
+                            <h2 id="overlay-title">Snake Game</h2>
+                            <p id="overlay-message">Use arrow keys to move. Eat the food to grow!</p>
+                            <button id="start-btn" class="btn btn-primary">Start Game</button>
+                            <button id="settings-btn" class="btn btn-secondary">Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <div class="game-buttons">
+                        <button id="pause-btn" class="btn btn-control">
+                            <i class="icon-pause"></i> Pause
+                        </button>
+                        <button id="restart-btn" class="btn btn-control">
+                            <i class="icon-restart"></i> Restart
+                        </button>
+                        <button id="sound-toggle" class="btn btn-control">
+                            <i class="icon-sound"></i> Sound
+                        </button>
+                    </div>
+
+                    <div class="mobile-controls">
+                        <div class="mobile-control-row">
+                            <button class="mobile-btn up" data-direction="up">↑</button>
+                        </div>
+                        <div class="mobile-control-row">
+                            <button class="mobile-btn left" data-direction="left">←</button>
+                            <button class="mobile-btn down" data-direction="down">↓</button>
+                            <button class="mobile-btn right" data-direction="right">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>How to Play</h3>
+                <ul>
+                    <li>Use <strong>Arrow Keys</strong> or <strong>Swipe</strong> to control the snake</li>
+                    <li>Eat <span class="food-sample regular"></span> to grow and earn 10 points</li>
+                    <li>Eat <span class="food-sample bonus"></span> for bonus 50 points (disappears fast!)</li>
+                    <li>Avoid hitting walls or yourself</li>
+                    <li>Speed increases every 100 points</li>
+                </ul>
+            </div>
+        </main>
+
+        <footer>
+            <p>Snake Game &copy; 2023 | Use arrow keys or touch controls to play</p>
+        </footer>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Game Settings</h2>
+                <button id="close-settings" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <h3>Difficulty</h3>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="difficulty" value="easy" checked>
+                            <span>Easy (Slow)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="difficulty" value="normal">
+                            <span>Normal</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="difficulty" value="hard">
+                            <span>Hard (Fast)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Game Mode</h3>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="game-mode" value="classic" checked>
+                            <span>Classic (Walls kill)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="game-mode" value="nowalls">
+                            <span>No Walls (Wrap around)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Visual Options</h3>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="grid-toggle" checked>
+                        <span>Show Grid</span>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="trail-toggle" checked>
+                        <span>Snake Trail Effect</span>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="effects-toggle" checked>
+                        <span>Visual Effects</span>
+                    </label>
+                </div>
+
+                <div class="setting-group">
+                    <h3>Snake Color</h3>
+                    <div class="color-options">
+                        <button class="color-option" data-color="#4CAF50" style="background-color: #4CAF50;"></button>
+                        <button class="color-option" data-color="#2196F3" style="background-color: #2196F3;"></button>
+                        <button class="color-option" data-color="#9C27B0" style="background-color: #9C27B0;"></button>
+                        <button class="color-option" data-color="#FF9800" style="background-color: #FF9800;"></button>
+                        <button class="color-option" data-color="#F44336" style="background-color: #F44336;"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings" class="btn btn-primary">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
